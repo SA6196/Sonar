@@ -29,9 +29,25 @@ import sys
 from mode_library import get_all_modes
 from feasibility_filter import check_feasibility
 from mode_selector import select_mode
-from sonar_physics import get_snr  # Person 1 placeholder — see sonar_physics.py
+from sonar_physics import get_snr, SonarMode  # Person 1's real module
+from environment import Environment
 
 from measurement_logger import MeasurementLogger, MeasurementRecord, make_timestamp
+
+
+# ---------------------------------------------------------------------------
+# SonarMode mapping (bridges Person 2's mode dicts with Person 1's SonarMode)
+# ---------------------------------------------------------------------------
+# Person 1's get_snr expects a SonarMode with source_level_db and
+# directivity_index_db.  Person 2's mode dicts have gamma/sigma/energy_cost.
+# This mapping lives HERE in the integration layer so neither Person 1 nor
+# Person 2 has to know about the other's internal types.
+
+SONAR_MODES = {
+    "M1": SonarMode("M1-Scout",   source_level_db=140, directivity_index_db=10),
+    "M2": SonarMode("M2-Search",  source_level_db=160, directivity_index_db=15),
+    "M3": SonarMode("M3-Inspect", source_level_db=180, directivity_index_db=20),
+}
 
 
 # ---------------------------------------------------------------------------
@@ -163,12 +179,20 @@ def run_step(step_idx: int, scenario_name: str, state: dict, battery_pct: float,
     noise_db = state["noise_db"]
     available_energy_j = battery_pct_to_available_energy_j(battery_pct)
 
+    # Build an Environment object for Person 1's get_snr
+    env_obj = Environment(
+        target_range_m=range_m,
+        noise_level_db=noise_db,
+        battery_j=battery_pct / 100.0 * BATTERY_CAPACITY_J,
+    )
+
     feasibility_results = []
     mode_details = {}
 
     for mode in all_modes:
-        # Person 1 (placeholder): SNR for this mode under this environment.
-        snr_db = get_snr(range_m, noise_db, mode=mode)
+        # Person 1: SNR for this mode under this environment.
+        sonar_mode = SONAR_MODES[mode["id"]]
+        snr_db = get_snr(sonar_mode, env_obj)
 
         # Person 2: three-gate feasibility check. Interface untouched.
         result = check_feasibility(
