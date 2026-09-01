@@ -1,0 +1,157 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * EB-SDS instrumentation design system.
+ * Dark scientific console: near-black abyssal blue, cyan phosphor traces,
+ * amber caution, monospace technical type. All colors in oklch.
+ */
+
+@theme inline {
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 3px;
+  --radius-xl: 4px;
+  --radius-2xl: 4px;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-panel: var(--panel);
+  --color-panel-raised: var(--panel-raised);
+  --color-grid: var(--grid);
+  --color-trace: var(--trace);
+  --color-trace-dim: var(--trace-dim);
+  --color-signal: var(--signal);
+  --color-caution: var(--caution);
+  --color-alarm: var(--alarm);
+  --color-nominal: var(--nominal);
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+:root {
+  --radius: 2px;
+  --background: oklch(0.16 0.017 240);
+  --foreground: oklch(0.92 0.012 220);
+  --panel: oklch(0.192 0.018 242);
+  --panel-raised: oklch(0.225 0.02 243);
+  --grid: oklch(0.3 0.025 240);
+  --card: var(--panel);
+  --card-foreground: var(--foreground);
+  --popover: oklch(0.2 0.018 242);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.8 0.13 196);
+  --primary-foreground: oklch(0.16 0.017 240);
+  --secondary: oklch(0.26 0.02 242);
+  --secondary-foreground: oklch(0.9 0.01 220);
+  --muted: oklch(0.24 0.018 242);
+  --muted-foreground: oklch(0.62 0.02 232);
+  --accent: oklch(0.8 0.13 196);
+  --accent-foreground: oklch(0.16 0.017 240);
+  --destructive: oklch(0.63 0.2 25);
+  --destructive-foreground: oklch(0.96 0.01 240);
+  --border: oklch(0.29 0.022 242);
+  --input: oklch(0.29 0.022 242);
+  --ring: oklch(0.8 0.13 196);
+  --trace: oklch(0.83 0.15 194);
+  --trace-dim: oklch(0.55 0.06 230);
+  --signal: oklch(0.85 0.16 168);
+  --caution: oklch(0.82 0.15 78);
+  --alarm: oklch(0.66 0.2 22);
+  --nominal: oklch(0.84 0.16 158);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-mono);
+    font-feature-settings: "tnum" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@utility panel {
+  background-color: var(--panel);
+  border: 1px solid var(--border);
+}
+
+@utility label-xs {
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+@utility hairline {
+  border-top: 1px solid var(--border);
+}
+
+@utility scanlines {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--background) 22%, transparent) 0px,
+      color-mix(in oklab, var(--background) 22%, transparent) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    opacity: 0.35;
+  }
+}
+
+@keyframes ebsds-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@utility live-dot {
+  animation: ebsds-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes ebsds-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
+@utility stage-sweep {
+  animation: ebsds-sweep 1.1s linear infinite;
+}
